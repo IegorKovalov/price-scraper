@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from scrapers.walmart_scraper import scrape_walmart
+from scrapers.scraper_manager import scrape_all_sites
 
 app = Flask(__name__)
 CORS(app)
@@ -14,16 +14,23 @@ def search():
         if not query:
             return jsonify({'error': 'Query parameter is required'}), 400
         
-        # Scrape Walmart
-        results = scrape_walmart(query)
+        print(f"[API] Received search request: {query}")
+        
+        # Scrape all sites together
+        results = scrape_all_sites(query, max_results_per_site=3)
         
         return jsonify({
             'success': True,
-            'count': len(results),
-            'products': results
+            'count': len(results['products']),
+            'products': results['products'],
+            'by_store': results['by_store'],
+            'errors': results['errors']
         })
     
     except Exception as e:
+        print(f"[ERROR] API error: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'success': False,
             'error': str(e)
