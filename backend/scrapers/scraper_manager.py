@@ -1,20 +1,20 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from .walmart_scraper import scrape_walmart
 from .amazon_scraper import scrape_amazon
-from .costco_scraper import scrape_costco
+from .target_scraper import scrape_target
 
 def scrape_all_sites(query, max_results_per_site=3):
     results = {
         'walmart': [],
         'amazon': [],
-        'costco': [],
+        'target': [],
         'errors': []
     }
     
     scrapers = {
         'walmart': lambda: scrape_walmart(query, max_results_per_site),
         'amazon': lambda: scrape_amazon(query, max_results_per_site),
-        'costco': lambda: scrape_costco(query, max_results_per_site)
+        'target': lambda: scrape_target(query, max_results_per_site)
     }
     
     print(f"[INFO] Starting concurrent scraping for query: {query}")
@@ -39,7 +39,7 @@ def scrape_all_sites(query, max_results_per_site=3):
     all_products = []
     all_products.extend(results['walmart'])
     all_products.extend(results['amazon'])
-    all_products.extend(results['costco'])  
+    all_products.extend(results['target'])
     
     print(f"[INFO] Total products scraped: {len(all_products)}")
     
@@ -48,7 +48,7 @@ def scrape_all_sites(query, max_results_per_site=3):
         'by_store': {
             'walmart': results['walmart'],
             'amazon': results['amazon'],
-            'costco': results['costco']
+            'target': results['target']
         },
         'errors': results['errors']
     }
